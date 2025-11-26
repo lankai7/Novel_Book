@@ -44,6 +44,11 @@ MainWindow::MainWindow(QWidget *parent)
         updateSearchUI(list);
     });
 
+    // 初始隐藏（如果当前不是最大化状态）
+        if (!isMaximized()) {
+            ui->chapter_text->hide();
+        }
+
     // === 绑定列表点击 ===
     connect(ui->listSearch, &QListWidget::itemClicked,
             this, &MainWindow::on_listSearch_itemClicked);
@@ -388,6 +393,19 @@ void MainWindow::on_read_btn_clicked()
     novelwindow->show();
 }
 
+void MainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::WindowStateChange) {
+        // 直接根据当前状态更新UI
+        if (windowState() & Qt::WindowMaximized) {
+            ui->chapter_text->show();
+        } else {
+            ui->chapter_text->hide();
+        }
+    }
+
+    QMainWindow::changeEvent(event);
+}
 
 void MainWindow::on_index_clicked()
 {

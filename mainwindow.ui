@@ -124,93 +124,7 @@ QTextBrowser#textContent {
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,0,0,2" columnstretch="2,1,2,2,2" rowminimumheight="0,1,1,0,0,2" columnminimumwidth="2,1,2,2,2">
-      <item row="2" column="0" rowspan="4" colspan="2">
-       <widget class="QListWidget" name="listSearch"/>
-      </item>
-      <item row="3" column="2" colspan="3">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>简介：</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2" colspan="3">
-       <widget class="QTextBrowser" name="intro">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>100</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>100</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLineEdit" name="editKeyword">
-        <property name="minimumSize">
-         <size>
-          <width>260</width>
-          <height>60</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>260</width>
-          <height>60</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="btnSearch">
-        <property name="minimumSize">
-         <size>
-          <width>130</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>130</width>
-          <height>60</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>🔎搜索</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2" colspan="3">
-       <widget class="QListWidget" name="listChapter"/>
-      </item>
-      <item row="1" column="2" rowspan="2">
-       <widget class="QLabel" name="labelCover">
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>210</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>160</width>
-          <height>210</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,0,0,2,0" columnstretch="2,1,2,2,2" rowminimumheight="0,1,1,0,0,2,0" columnminimumwidth="2,1,2,2,2">
       <item row="1" column="3" rowspan="2" colspan="2">
        <widget class="QWidget" name="info" native="true">
         <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0">
@@ -345,6 +259,54 @@ QPushButton:pressed {
         </layout>
        </widget>
       </item>
+      <item row="3" column="2" colspan="3">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>简介：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" colspan="3">
+       <widget class="QTextBrowser" name="intro">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>100</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2" colspan="3">
+       <widget class="QListWidget" name="listChapter"/>
+      </item>
+      <item row="1" column="2" rowspan="2">
+       <widget class="QLabel" name="labelCover">
+        <property name="minimumSize">
+         <size>
+          <width>160</width>
+          <height>210</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>160</width>
+          <height>210</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0" colspan="5">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -432,7 +394,130 @@ QPushButton:pressed {
         </item>
        </layout>
       </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="btnSearch">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>130</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>🔎搜索</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="editKeyword">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>60</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" rowspan="5" colspan="2">
+       <widget class="QListWidget" name="listSearch"/>
+      </item>
+      <item row="6" column="2" colspan="3">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>上一页</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>下一页</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>第</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>页/共</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_2">
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>12</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>页</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="chapter_text">
+      <property name="maximumSize">
+       <size>
+        <width>700</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

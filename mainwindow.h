@@ -65,6 +65,7 @@ private slots:
 
     void on_read_btn_clicked();
 
+    void changeEvent(QEvent *event)override;
 
 private:
 
