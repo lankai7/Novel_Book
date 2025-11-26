@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">/* ===========================
+   QLineEdit：搜索框 editKeyword
+   =========================== */
+QLineEdit#editKeyword {
+    border: 1px solid #888;
+    border-radius: 6px;
+    padding: 5px 8px;
+    background: #f8f8f8;
+    selection-background-color: #0080ff;
+}
+
+QLineEdit#editKeyword:focus {
+    border: 1px solid #409eff;
+    background: #ffffff;
+}
+
+/* ===========================
+   QPushButton：搜索按钮 btnSearch
+   =========================== */
+QPushButton#btnSearch {
+    background-color: #409eff;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+
+QPushButton#btnSearch:hover {
+    background-color: #66b1ff;
+}
+
+QPushButton#btnSearch:pressed {
+    background-color: #3a8ee6;
+}
+
+/* ===========================
+   QListWidget：搜索列表 listSearch
+   =========================== */
+QListWidget#listSearch {
+    background: #ffffff;
+    border: 1px solid #ccc;
+}
+
+QListWidget#listSearch::item {
+    border-bottom: 1px solid #e5e5e5;
+    padding: 6px;
+}
+
+QListWidget#listSearch::item:selected {
+    background: #d0e8ff;
+    color: #000;
+}
+
+/* ===========================
+   QLabel：标题、作者、封面
+   labelTitle
+   labelAuthor
+   labelCover
+   =========================== */
+
+QLabel{
+    font-size: 14px;
+    color: #666;
+}
+
+/* 标题 */
+QLabel#labelTitle {
+    font-size: 19px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 封面（建议） */
+QLabel#labelCover {
+    border: 1px solid #ccc;
+    background: #fafafa;
+    padding: 4px;
+}
+
+/* ===========================
+   chapter 列表 listChapter
+   =========================== */
+QListWidget#listChapter {
+    background: #ffffff;
+    border: 1px solid #ccc;
+}
+
+QListWidget#listChapter::item {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+QListWidget#listChapter::item:selected {
+    background: #d0e8ff;
+}
+
+/* ===========================
+   QTextBrowser：内容 textContent
+   =========================== */
+QTextBrowser#textContent {
+    background: #fdfdfd;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-size: 15px;
+    color: #333;
+}
+</string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,1,1,0,0,2" columnstretch="2,1,2,2,2" rowminimumheight="0,1,1,0,0,2" columnminimumwidth="2,1,2,2,2">
+      <item row="2" column="0" rowspan="4" colspan="2">
+       <widget class="QListWidget" name="listSearch"/>
+      </item>
+      <item row="3" column="2" colspan="3">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>简介：</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2" colspan="3">
+       <widget class="QTextBrowser" name="intro">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>100</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="editKeyword">
+        <property name="minimumSize">
+         <size>
+          <width>260</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>260</width>
+          <height>60</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="btnSearch">
+        <property name="minimumSize">
+         <size>
+          <width>130</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>130</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>🔎搜索</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2" colspan="3">
+       <widget class="QListWidget" name="listChapter"/>
+      </item>
+      <item row="1" column="2" rowspan="2">
+       <widget class="QLabel" name="labelCover">
+        <property name="minimumSize">
+         <size>
+          <width>160</width>
+          <height>210</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>160</width>
+          <height>210</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" rowspan="2" colspan="2">
+       <widget class="QWidget" name="info" native="true">
+        <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,0">
+         <item row="3" column="3">
+          <widget class="QLabel" name="full">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="label_2">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>作者：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" colspan="3">
+          <widget class="QPushButton" name="read_btn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+    background-color: #FF5252;  
+    color: #FFF8DC;            
+    border: none;
+    padding: 12px 32px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    min-width: 150px;
+}
+
+QPushButton:hover {
+    background-color: #FF6B6B;
+    color: white;
+}
+
+QPushButton:pressed {
+    background-color: #E53935;
+}</string>
+           </property>
+           <property name="text">
+            <string>开始阅读</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="labelAuthor">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2" colspan="2">
+          <widget class="QLabel" name="lastchapter">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="3">
+          <widget class="QLabel" name="labelTitle">
+           <property name="text">
+            <string>小说</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QLabel" name="type">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QLabel" name="lastupdate">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="label_4">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>最新：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>更新：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="3">
+          <widget class="QLabel" name="label_5">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>5</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>5</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="5">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="index">
+          <property name="text">
+           <string>首页</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="xuanhuan">
+          <property name="text">
+           <string>玄幻</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="wuxia">
+          <property name="text">
+           <string>武侠</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="dushi">
+          <property name="text">
+           <string>都市</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="lishi">
+          <property name="text">
+           <string>历史</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="wangyou">
+          <property name="text">
+           <string>网游</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="kehuan">
+          <property name="text">
+           <string>科幻</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="nvshen">
+          <property name="text">
+           <string>女生</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="login">
+          <property name="text">
+           <string>登录/注册</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnSetApi">
+          <property name="text">
+           <string>设置</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

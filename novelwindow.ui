@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NovelWindow</class>
+ <widget class="QWidget" name="NovelWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QTextBrowser" name="textContent">
+     <property name="styleSheet">
+      <string notr="true">QTextBrowser {
+    /* 背景颜色：柔和米白 */
+    background-color: #F7F3E9;
+
+    /* 正文字体：常用阅读字体 */
+    font-family: &quot;Microsoft YaHei&quot;, &quot;微软雅黑&quot;, &quot;SimSun&quot;, &quot;宋体&quot;;
+
+    /* 字号大一点（阅读更舒服） */
+    font-size: 18px;
+
+    /* 字体颜色 */
+    color: #333333;
+
+    /* 控件边框去掉 */
+    border: none;
+
+    /* 内边距，避免文字贴边 */
+    padding: 16px;
+
+    /* 行高（行间距） */
+    line-height: 1.6;
+
+    /* 自动换行更自然 */
+    text-align: left;
+}
+
+/* 处理内部段落样式（HTML标签） */
+QTextBrowser p {
+    /* 首行缩进两字符 */
+    text-indent: 2em;
+
+    /* 段落间距 */
+    margin: 0 0 12px 0;
+}
+
+/* 超链接统一颜色（如果小说包含目录链接等） */
+QTextBrowser a {
+    color: #1A73E8;
+    text-decoration: none;
+}
+
+QTextBrowser a:hover {
+    text-decoration: underline;
+}
+</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
