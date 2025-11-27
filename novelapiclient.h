@@ -28,7 +28,7 @@ public:
     void loadBookInfo(const QString &bookId);
 
     // 请求某章节内容
-    void loadChapter(const QString &bookId, int chapterId);
+    void loadChapter(const QString &bookId, int chapterId, bool read);
 
     //首页
     void loadTopList(QString type);
@@ -42,7 +42,7 @@ signals:
     void searchFinished(const QList<NovelSearchItem> &list);
     void bookInfoFinished(const NovelBookInfo &info);
     void chapterListFinished(const QList<NovelChapterItem> &list);
-    void chapterFinished(const NovelChapter &chapter);
+    void chapterFinished(const NovelChapter &chapter, bool read);
     void sigTopList(const QList<NovelSearchItem> &list);   // 首页榜单数据返回
     void apiError(const QString &err);
 

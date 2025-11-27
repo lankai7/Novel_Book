@@ -8,6 +8,10 @@
 #include "apidialog.h"
 #include "tiplabel.h"
 #include <QSettings>
+#include <QLabel>
+#include <QMenu>
+#include <QThread>
+
 /**
  * @brief   :小说阅读器主窗口 - 调用 NovelApiClient 示例（结构体版）
  * @author  :樊晓亮
@@ -18,6 +22,21 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    setFocusPolicy(Qt::StrongFocus);   // 保证能接收键盘
+    // 托盘
+        createTray();
+
+        // 全局老板键
+        bossKey = new BossKeyManager(this);
+        qApp->installNativeEventFilter(bossKey);
+
+        if (!bossKey->registerHotKey()) {
+            qDebug() << "全局老板键 F4 注册失败";
+        }
+
+        connect(bossKey, &BossKeyManager::bossKeyPressed,
+                this, &MainWindow::toggleBossKey);
+
     ui->setupUi(this);
     m_api = new NovelApiClient(this);
     // 程序启动时自动读取 API
@@ -45,9 +64,10 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     // 初始隐藏（如果当前不是最大化状态）
-        if (!isMaximized()) {
-            ui->chapter_text->hide();
-        }
+    if (!isMaximized()) {
+        ui->chapter_text->setMaximumWidth(0); // 压缩为0宽度
+        ui->chapter_text->hide();
+    }
 
     // === 绑定列表点击 ===
     connect(ui->listSearch, &QListWidget::itemClicked,
@@ -56,15 +76,33 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->listChapter, &QListWidget::itemClicked,
             this, &MainWindow::on_listChapter_itemClicked);
 
+    // 双击章节信号
+    connect(ui->listChapter, &QListWidget::itemDoubleClicked,
+            this, &MainWindow::onChapterDoubleClicked);
+
+    // 绑定章节列表信号
+    connect(m_api, &NovelApiClient::chapterListFinished, this, &MainWindow::updateChapterList);
+
     // 程序刚打开时自动加载首页榜单
     m_api->loadTopList("index");
 
     QPixmap pix(":/res/res/cover.jpg");
     ui->labelCover->setPixmap(
-        pix.scaled(150, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation)
-    );
+                pix.scaled(150, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+                );
 
-    novelwindow = new NovelWindow(nullptr, "加载中……");
+    novelWindow = new NovelWindow(nullptr, "加载中……");
+    novelWindow->setWindowTitle("阅读");
+
+    connect(novelWindow, &NovelWindow::sigPrevChapter, this, &MainWindow::onPrevChapter);
+    connect(novelWindow, &NovelWindow::sigNextChapter, this, &MainWindow::onNextChapter);
+
+    connect(novelWindow, &NovelWindow::requestRegisterMe,
+            this, &MainWindow::registerSubWindow);
+
+
+    loadBookshelf();
+
 }
 
 MainWindow::~MainWindow()
@@ -98,6 +136,9 @@ void MainWindow::on_btnSearch_clicked()
  *------------------------------------*/
 void MainWindow::updateSearchUI(const QList<NovelSearchItem> &list)
 {
+    if(list.isEmpty()){
+    }
+
     // 停止当前下载
     if (m_currentReply) {
         m_currentReply->abort();
@@ -138,19 +179,19 @@ void MainWindow::updateSearchUI(const QList<NovelSearchItem> &list)
 
     processNextCover();
     // ========== 自动显示第一个书籍 ==========
-        if (!list.isEmpty()) {
+    if (!list.isEmpty()) {
 
-            m_currentBookId = list.first().id;
+        m_currentBookId = list.first().id;
 
-            // 自动加载书籍详情
-            m_api->loadBookInfo(m_currentBookId);
+        // 自动加载书籍详情
+        m_api->loadBookInfo(m_currentBookId);
 
-            if (bookExists(m_currentBookId)) {
-                ui->read_btn->setText("继续阅读");
-            } else {
-                ui->read_btn->setText("开始阅读");
-            }
+        if (bookExists(m_currentBookId)) {
+            ui->read_btn->setText("继续阅读");
+        } else {
+            ui->read_btn->setText("开始阅读");
         }
+    }
 }
 
 
@@ -178,6 +219,7 @@ void MainWindow::on_listSearch_itemClicked(QListWidgetItem *item)
  *------------------------------------*/
 void MainWindow::updateBookUI(const NovelBookInfo &info)
 {
+    m_novelBookInfo = info;
     // 设置标题与作者
     ui->labelTitle->setText(info.title);
     ui->labelAuthor->setText(info.author);
@@ -188,6 +230,9 @@ void MainWindow::updateBookUI(const NovelBookInfo &info)
     ui->type->setText(info.type);
     // 清空上一张封面，防止闪屏
     ui->labelCover->setPixmap(QPixmap());
+    //书架按钮显示
+    updateBookshelfButton(info.id);
+
     // ===== 加载封面（如果存在） =====
     if (!info.coverUrl.isEmpty()) {
 
@@ -205,8 +250,8 @@ void MainWindow::updateBookUI(const NovelBookInfo &info)
 
             // 设置封面（缩放）
             ui->labelCover->setPixmap(
-                pix.scaled(150, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation)
-            );
+                        pix.scaled(150, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation)
+                        );
         });
     }
 }
@@ -218,17 +263,23 @@ void MainWindow::updateBookUI(const NovelBookInfo &info)
  *------------------------------------*/
 void MainWindow::updateChapterList(const QList<NovelChapterItem> &chapters)
 {
-    ui->listChapter->clear();
+    m_allChapters = chapters;
 
-    for (const auto &c : chapters) {
-        QListWidgetItem *item = new QListWidgetItem(
-            QString("%1. %2").arg(c.id).arg(c.title)
-        );
-        item->setData(Qt::UserRole, c.id);
-        ui->listChapter->addItem(item);
+    if (chapters.isEmpty()) {
+        ui->listChapter->clear();
+        ui->edit_page->setText("0");
+        ui->all_page->setText("0");
+        return;
     }
-}
 
+    // 计算总页数
+    m_totalPage = (chapters.size() + m_pageSize - 1) / m_pageSize;
+    m_currentPage = 1;
+
+    ui->all_page->setText(QString::number(m_totalPage));
+
+    updateChapterListPaged();
+}
 
 
 /*------------------------------------
@@ -236,38 +287,52 @@ void MainWindow::updateChapterList(const QList<NovelChapterItem> &chapters)
  *------------------------------------*/
 void MainWindow::on_listChapter_itemClicked(QListWidgetItem *item)
 {
-    novelwindow->setNovel("加载中，请稍等……");
+    ui->chapter_text->setText("加载中，请稍等……");
     int cid = item->data(Qt::UserRole).toInt();
-    m_api->loadChapter(m_currentBookId, cid);
+    m_api->loadChapter(m_currentBookId, cid, false);
+}
+
+void MainWindow::onChapterDoubleClicked(QListWidgetItem *item)
+{
+    novelWindow->setNovel("加载中，请稍等……");
+    novelWindow->setWindowTitle(ui->labelTitle->text());
+    int cid = item->data(Qt::UserRole).toInt();
+    m_api->loadChapter(m_currentBookId, cid, true);
+    m_chapterId = cid;
 }
 
 
 /*------------------------------------
  * 正文内容
  *------------------------------------*/
-void MainWindow::updateTextView(const NovelChapter &chap)
+void MainWindow::updateTextView(const NovelChapter &chap, bool read)
 {
     QString txt = chap.text;
     txt.replace("\n", "\n\n       ");
     txt = chap.chapterName + "\n\n" + txt;
 
-    novelwindow->setNovel(txt);
+    if(read){
+        novelWindow->setNovel(txt);
 
-    // ===== 在这里记录当前阅读状态 =====
-    m_lastBookId    = m_currentBookId;
-    m_lastChapterId = chap.chapterId;    // 注意：NovelChapter 里必须要有 chapterId
-    m_lastPos       = 0;                 // 初始 0，读取后再恢复
+        // ===== 在这里记录当前阅读状态 =====
+        m_lastBookId    = m_currentBookId;
+        m_lastChapterId = chap.chapterId;    // 注意：NovelChapter 里必须要有 chapterId
+        m_lastPos       = 0;                 // 初始 0，读取后再恢复
 
-    saveReadProgress(m_currentBookId, QString::number(m_lastChapterId), m_lastPos);
+        saveReadProgress(m_currentBookId, QString::number(m_lastChapterId), m_lastPos);
 
-    if (!novelwindow->isVisible()){
-        novelwindow->show();
+        if (!novelWindow->isVisible()){
+            novelWindow->show();
+        }
+
+        // ===== 延迟恢复滚动条位置 =====
+        QTimer::singleShot(0, this, [=](){
+            novelWindow->setScrollPos(m_lastPos);   // novelwindow 需增加此接口
+        });
     }
-
-    // ===== 延迟恢复滚动条位置 =====
-    QTimer::singleShot(0, this, [=](){
-        novelwindow->setScrollPos(m_lastPos);   // novelwindow 需增加此接口
-    });
+    else{
+        ui->chapter_text->setText(txt);
+    }
 }
 
 
@@ -311,6 +376,26 @@ void MainWindow::processNextCover()
 
         processNextCover();
     });
+}
+
+void MainWindow::updateChapterListPaged()
+{
+    ui->listChapter->clear();
+
+    int start = (m_currentPage - 1) * m_pageSize;
+    int end   = qMin(start + m_pageSize, m_allChapters.size());
+
+    for (int i = start; i < end; ++i) {
+        const NovelChapterItem &c = m_allChapters[i];
+
+        QListWidgetItem *item = new QListWidgetItem(
+                    QString("%1. %2").arg(c.id).arg(c.title)
+                    );
+        item->setData(Qt::UserRole, c.id);
+        ui->listChapter->addItem(item);
+    }
+    // 设置当前页数字
+    ui->edit_page->setText(QString::number(m_currentPage));
 }
 
 bool MainWindow::loadReadProgress(const QString &bookId,
@@ -363,10 +448,63 @@ bool MainWindow::bookExists(const QString &bookId)
     return set.contains(key);
 }
 
+void MainWindow::loadBookshelf()
+{
+    QSettings set("bookshelf.ini", QSettings::IniFormat);
+
+    set.beginGroup("bookshelf");
+    QString ids = set.value("ids").toString();
+    set.endGroup();
+
+    if (!ids.isEmpty())
+        m_bookshelf = ids.split(",", Qt::SkipEmptyParts);
+}
+
+
+void MainWindow::saveBookshelf()
+{
+    QSettings set("bookshelf.ini", QSettings::IniFormat);
+
+    set.beginGroup("bookshelf");
+    set.setValue("ids", m_bookshelf.join(","));
+    set.endGroup();
+}
+
+
+void MainWindow::addBookToBookshelf(const NovelBookInfo &info)
+{
+    if (m_bookshelf.contains(info.id))
+        return;
+
+    m_bookshelf.append(info.id);
+
+    QSettings set("bookshelf.ini", QSettings::IniFormat);
+
+    // 写入 [books/ID]
+    set.beginGroup("books/" + info.id);
+    set.setValue("title",  info.title);
+    set.setValue("author", info.author);
+    set.endGroup();
+
+    saveBookshelf();
+}
+
+void MainWindow::updateBookshelfButton(const QString &bookId)
+{
+    // 判断该书是否在书架列表中
+    bool exists = m_bookshelf.contains(bookId);
+
+    if (exists) {
+        ui->add_bookshelf->setText("移出书架");
+    } else {
+        ui->add_bookshelf->setText("加入书架");
+    }
+}
+
 
 void MainWindow::on_read_btn_clicked()
 {
-    novelwindow->setNovel("加载中，请稍等……");
+    novelWindow->setNovel("加载中，请稍等……");
     // 如果当前书籍ID为空，无法继续
     if (m_currentBookId.isEmpty())
         return;
@@ -376,36 +514,41 @@ void MainWindow::on_read_btn_clicked()
 
     // ===== 读取当前书的阅读进度 =====
     bool ok = loadReadProgress(m_currentBookId, lastChap, lastPos);
+    novelWindow->setWindowTitle(ui->labelTitle->text());
 
     if (ok && !lastChap.isEmpty()) {
         // 上次读到的章节存在 → 加载该章节
-        m_api->loadChapter(m_currentBookId, lastChap.toInt());
+        m_api->loadChapter(m_currentBookId, lastChap.toInt(),true);
+        m_chapterId = lastChap.toInt();
     } else {
         // 没有记录 → 打开第一章
         QListWidgetItem *item = ui->listChapter->item(0);
         if (!item) return;
 
         int cid = item->data(Qt::UserRole).toInt();
-        m_api->loadChapter(m_currentBookId, cid);
+        m_api->loadChapter(m_currentBookId, cid,true);
+        m_chapterId = cid;
     }
 
     // 显示阅读窗口
-    novelwindow->show();
+    novelWindow->show();
 }
 
 void MainWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::WindowStateChange) {
-        // 直接根据当前状态更新UI
         if (windowState() & Qt::WindowMaximized) {
+            ui->chapter_text->setMaximumWidth(QWIDGETSIZE_MAX); // 恢复正常
             ui->chapter_text->show();
         } else {
+            ui->chapter_text->setMaximumWidth(0); // 压缩为0宽度
             ui->chapter_text->hide();
         }
     }
 
     QMainWindow::changeEvent(event);
 }
+
 
 void MainWindow::on_index_clicked()
 {
@@ -450,16 +593,198 @@ void MainWindow::on_nvshen_clicked()
 void MainWindow::on_btnSetApi_clicked()
 {
     ApiDialog dlg(this);
-            if (dlg.exec() == QDialog::Accepted) {
+    if (dlg.exec() == QDialog::Accepted) {
 
-                // 用户保存后可在这里立即刷新你的 m_api
-                QString api = dlg.apiText();
-                m_api->setApiBase(api);  // 你自己的类
-                TipLabel::showTip(this, "API 已更新为:" + api, 1200, "success");
-            }
+        // 用户保存后可在这里立即刷新你的 m_api
+        QString api = dlg.apiText();
+        m_api->setApiBase(api);  // 你自己的类
+        TipLabel::showTip(this, "API 已更新为:" + api, 1200, "success");
+    }
 }
 
-void MainWindow::on_login_clicked()
+void MainWindow::on_prev_btn_clicked()
 {
+    if (m_currentPage > 1) {
+        m_currentPage--;
+        updateChapterListPaged();
+    }
+}
 
+void MainWindow::on_next_btn_clicked()
+{
+    if (m_currentPage < m_totalPage) {
+        m_currentPage++;
+        updateChapterListPaged();
+    }
+}
+
+void MainWindow::on_edit_page_returnPressed()
+{
+    bool ok = false;
+    int p = ui->edit_page->text().toInt(&ok);
+
+    if (ok && p >= 1 && p <= m_totalPage) {
+        m_currentPage = p;
+        updateChapterListPaged();
+    } else {
+        ui->edit_page->setText(QString::number(m_currentPage));
+    }
+}
+
+void MainWindow::on_add_bookshelf_clicked()
+{
+    if (m_currentBookId.isEmpty())
+        return;
+    bool exists = m_bookshelf.contains(m_currentBookId);
+
+    if (exists) {
+        // 从书架移除
+        m_bookshelf.removeAll(m_currentBookId);
+
+        // 从 INI 中删除书信息
+        QSettings set("bookshelf.ini", QSettings::IniFormat);
+        set.beginGroup("books");
+        set.remove(m_currentBookId);     // 删除节点 [books/id]
+        set.endGroup();
+
+        saveBookshelf();
+
+    } else {
+        addBookToBookshelf(m_novelBookInfo);
+    }
+
+    // 刷新按钮文字和列表
+    updateBookshelfButton(m_currentBookId);
+    on_book_shelf_clicked();
+
+}
+
+void MainWindow::on_book_shelf_clicked()
+{
+    QList<NovelSearchItem> list;
+    QSettings set("bookshelf.ini", QSettings::IniFormat);
+
+    // step 1：进入 books 组
+    set.beginGroup("books");
+
+    // step 2：获得所有书 ID（1155, 2333）
+    QStringList ids = set.childGroups();   // <-- 新结构重要优势
+
+    for (const QString &bid : ids) {
+
+        set.beginGroup(bid);   // 进入 [books/bid]
+
+        NovelSearchItem item;
+        item.id     = bid;
+        item.title  = set.value("title").toString();
+        item.author = set.value("author").toString();
+
+        set.endGroup();  // 退出 [books/bid]
+
+        list.append(item);
+    }
+
+    set.endGroup();  // 退出 books
+
+    updateSearchUI(list);
+}
+
+void MainWindow::onPrevChapter()
+{
+    if(m_chapterId>1){
+        m_api->loadChapter(m_currentBookId, --m_chapterId,true);
+    }
+    else
+        TipLabel::showTip(novelWindow, "已经是第一章！", 1200, "warning");
+}
+
+void MainWindow::onNextChapter()
+{
+    if(m_chapterId < m_allChapters.size()){
+        m_api->loadChapter(m_currentBookId, ++m_chapterId,true);
+    }
+    else
+        TipLabel::showTip(novelWindow, "已经是最后一章！", 1200, "warning");
+}
+void MainWindow::createTray()
+{
+    tray = new QSystemTrayIcon(this);
+    tray->setIcon(QIcon(":/icons/app.png"));
+    tray->setToolTip("阅读器已隐藏");
+
+    QMenu *menu = new QMenu;
+    QAction *restore = menu->addAction("恢复窗口");
+    QAction *quit = menu->addAction("退出");
+
+    connect(restore, &QAction::triggered, [this](){
+        if (m_hidden) toggleBossKey();
+    });
+    connect(quit, &QAction::triggered, [](){
+        qApp->quit();
+    });
+
+    tray->setContextMenu(menu);
+    tray->show();
+}
+
+void MainWindow::registerSubWindow(QWidget *w)
+{
+    // 防御性检查
+    if (!w) {
+        qWarning() << "registerSubWindow: null widget";
+        return;
+    }
+    // 只在主线程处理 UI（保险检查）
+    if (QThread::currentThread() != this->thread()) {
+        // 如果来自非 GUI 线程，延迟到主线程执行
+        QMetaObject::invokeMethod(this, [this, w](){ registerSubWindow(w); }, Qt::QueuedConnection);
+        return;
+    }
+
+    // 将 QPointer 包装，避免悬空指针问题
+    QPointer<QWidget> pw = w;
+
+    // 如果容器里已有相同指针，则忽略
+    for (const QPointer<QWidget> &existing : qAsConst(m_subWindows)) {
+        if (existing == pw) {
+            // 已存在或已被加入
+            return;
+        }
+    }
+
+    // 安全追加（如果容器被损坏，这里也能避免异常）
+    try {
+        if (!m_subWindows.contains(pw)) {
+            m_subWindows.append(pw);
+        }
+    } catch (...) {
+        qWarning() << "registerSubWindow: append failed";
+    }
+
+    qDebug() << "registerSubWindow: now have" << m_subWindows.size() << "subwindows";
+}
+
+void MainWindow::toggleBossKey()
+{
+    m_hidden = !m_hidden;
+
+    if (m_hidden) {
+        // 隐藏所有窗口
+        this->hide();
+        for (auto w : m_subWindows) w->hide();
+
+        tray->showMessage("已隐藏", "窗口已安全隐藏", QSystemTrayIcon::Information, 800);
+    }
+    else {
+        // 恢复主窗口
+        this->showNormal();
+        this->raise();
+        this->activateWindow();
+
+        // 恢复子窗口
+        for (auto w : m_subWindows) {
+            w->show();
+            w->activateWindow();
+        }
+    }
 }

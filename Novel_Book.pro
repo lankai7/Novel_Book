@@ -18,6 +18,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     apidialog.cpp \
+    bosskeymanager.cpp \
+    interfacesetting.cpp \
     main.cpp \
     mainwindow.cpp \
     novelapiclient.cpp \
@@ -27,6 +29,8 @@ SOURCES += \
 
 HEADERS += \
     apidialog.h \
+    bosskeymanager.h \
+    interfacesetting.h \
     mainwindow.h \
     novelapiclient.h \
     noveltypes.h \
@@ -35,6 +39,7 @@ HEADERS += \
     tiplabel.h
 
 FORMS += \
+    interfacesetting.ui \
     mainwindow.ui \
     novelwindow.ui
 

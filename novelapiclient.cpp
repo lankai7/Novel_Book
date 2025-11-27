@@ -162,7 +162,7 @@ void NovelApiClient::loadBookInfo(const QString &bookId)
 /*===============================
  *  加载单章内容
  *===============================*/
-void NovelApiClient::loadChapter(const QString &bookId, int chapterId)
+void NovelApiClient::loadChapter(const QString &bookId, int chapterId, bool read)
 {
     QUrl url(m_base + "/chapter");
     QUrlQuery q;
@@ -172,7 +172,7 @@ void NovelApiClient::loadChapter(const QString &bookId, int chapterId)
 
     auto reply = m_nam.get(makeRequest(url));
 
-    connect(reply, &QNetworkReply::finished, this, [this, reply, chapterId]() {
+    connect(reply, &QNetworkReply::finished, this, [this, reply, chapterId, read]() {
         QByteArray data = reply->readAll();
         reply->deleteLater();
 
@@ -189,8 +189,7 @@ void NovelApiClient::loadChapter(const QString &bookId, int chapterId)
             c.chapterName = info.value("chaptername").toString();
             c.text = info.value("txt").toString();
         }
-
-        emit chapterFinished(c);
+        emit chapterFinished(c, read);
     });
 }
 

@@ -2,6 +2,8 @@
 
 #include <QApplication>
 
+MainWindow *g_main = nullptr;
+
 int main(int argc, char *argv[])
 {
     // 启用 Qt 高 DPI 缩放
@@ -9,7 +11,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);        // 图片不模糊
 
     QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    g_main = new MainWindow;
+    g_main->setWindowTitle("阅读");
+    g_main->show();
+
     return a.exec();
 }

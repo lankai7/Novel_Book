@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>InterfaceSetting</class>
+ <widget class="QWidget" name="InterfaceSetting">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>331</width>
+    <height>226</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,4,1">
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">/* ========== 全局背景 ========== */
+QWidget {
+    background: #f7f7f7;
+    font-family: &quot;Microsoft YaHei&quot;;
+    font-size: 14px;
+    color: #333333;
+}
+
+/* ========== GroupBox ========== */
+QGroupBox {
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    margin-top: 10px;
+    padding: 8px;
+    font-weight: bold;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding-left: 6px;
+    background: transparent;
+}
+
+/* ========== Label ========== */
+QLabel {
+    color: #444444;
+    font-size: 14px;
+}
+
+/* ========== ComboBox ========== */
+QComboBox {
+    border: 1px solid #c8c8c8;
+    border-radius: 6px;
+    padding: 4px 8px;
+    background: #ffffff;
+}
+
+QComboBox:hover {
+    border: 1px solid #a8a8a8;
+}
+
+QComboBox:drop-down {
+    border: none;
+}
+
+QComboBox QAbstractItemView {
+    border: 1px solid #c8c8c8;
+    background: #ffffff;
+    selection-background-color: #dbe9ff;
+    outline: none;
+}
+
+/* ========== Slider ========== */
+QSlider::groove:horizontal {
+    height: 6px;
+    background: #e4e4e4;
+    border-radius: 3px;
+}
+
+QSlider::handle:horizontal {
+    width: 16px;
+    height: 16px;
+    background: #4a90e2;
+    border-radius: 8px;
+    margin: -5px 0;
+}
+
+QSlider::handle:horizontal:hover {
+    background: #3a7bd5;
+}
+
+QSlider::sub-page:horizontal {
+    background: #4a90e2;
+    border-radius: 3px;
+}
+
+/* ========== PushButton ========== */
+QPushButton {
+    background: #4a90e2;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+}
+
+QPushButton:hover {
+    background: #3a7bd5;
+}
+
+QPushButton:pressed {
+    background: #2f6cab;
+}
+
+/* ========== Scroll Area ========== */
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QScrollArea QWidget {
+    background: transparent;
+}
+
+/* ========== LineEdit（如果你有的话） ========== */
+QLineEdit {
+    border: 1px solid #c8c8c8;
+    border-radius: 6px;
+    padding: 4px 6px;
+    background: #ffffff;
+}
+
+QLineEdit:hover {
+    border: 1px solid #a8a8a8;
+}
+</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+        <item>
+         <widget class="QLabel" name="font">
+          <property name="text">
+           <string>字体：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox_font"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
+        <item>
+         <widget class="QLabel" name="theme">
+          <property name="text">
+           <string>主题：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox_theme"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+        <item>
+         <widget class="QLabel" name="fontsize">
+          <property name="text">
+           <string>字号：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="horizontalSlider_fontsize">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
+        <item>
+         <widget class="QLabel" name="spacing">
+          <property name="text">
+           <string>行距：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="horizontalSlider_spacing">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
