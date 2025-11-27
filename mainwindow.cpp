@@ -100,6 +100,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(novelWindow, &NovelWindow::requestRegisterMe,
             this, &MainWindow::registerSubWindow);
 
+    connect(novelWindow, &NovelWindow::requestUnregisterMe,
+            this, &MainWindow::unregisterSubWindow);
+
 
     loadBookshelf();
 
@@ -787,4 +790,9 @@ void MainWindow::toggleBossKey()
             w->activateWindow();
         }
     }
+}
+
+void MainWindow::unregisterSubWindow(QWidget *w)
+{
+    m_subWindows.removeAll(w);
 }

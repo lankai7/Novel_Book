@@ -23,11 +23,15 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void showEvent(QShowEvent *event);
+    void closeEvent(QCloseEvent *event);
 
 signals:
     void sigPrevChapter();   // 请求上一章
     void sigNextChapter();   // 请求下一章
+signals:
     void requestRegisterMe(QWidget *w);
+    void requestUnregisterMe(QWidget *w);
+
 
 
 private slots:
@@ -40,6 +44,7 @@ private:
     Ui::NovelWindow *ui;
     bool m_menuVisible = true;   // true = 按钮显示中
     InterfaceSetting *m_interfaceSetting;
+    bool registered = false;
 };
 
 #endif // NOVELWINDOW_H

@@ -268,15 +268,23 @@ void NovelWindow::on_btn_setting_clicked()
     m_interfaceSetting->show();
 }
 
-// novelwindow.cpp
 void NovelWindow::showEvent(QShowEvent *event)
 {
-    static bool registered = false;
-
     if (!registered) {
-        emit requestRegisterMe(this);  // 通知 MainWindow
+        emit requestRegisterMe(this);
         registered = true;
     }
-
     QWidget::showEvent(event);
 }
+
+void NovelWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug() << "NovelWindow closeEvent triggered!";
+    if (registered) {
+        emit requestUnregisterMe(this);   // ✔️ 正确：取消注册！
+        registered = false;
+    }
+    QWidget::closeEvent(event);
+}
+
+

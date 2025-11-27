@@ -34,6 +34,7 @@ public:
 
     // 注册一起隐藏的子窗口
     void registerSubWindow(QWidget *w);
+    void unregisterSubWindow(QWidget *w);
 
 public slots:
     void toggleBossKey();    // 执行隐藏/恢复
