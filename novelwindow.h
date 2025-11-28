@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include "interfacesetting.h"
+#include "autoscroller.h"
+#include <QLabel>
+#include "throttle.h"
 
 namespace Ui {
 class NovelWindow;
@@ -19,6 +22,7 @@ public:
     void setNovel(QString txt = "");
     void setScrollPos(int pos);
     int scrollPos();
+    void setLabel(QString label);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -37,14 +41,16 @@ signals:
 private slots:
     void on_btn_hide_clicked();
     void applyReaderSetting();
-
     void on_btn_setting_clicked();
+    void on_btn_AutoScroll_clicked();
 
 private:
     Ui::NovelWindow *ui;
     bool m_menuVisible = true;   // true = 按钮显示中
     InterfaceSetting *m_interfaceSetting;
     bool registered = false;
+    AutoScroller *m_autoScroll = nullptr;
+    Throttle *thr;
 };
 
 #endif // NOVELWINDOW_H

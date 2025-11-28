@@ -21,6 +21,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     apidialog.cpp \
+    autoscroller.cpp \
     bosskeymanager.cpp \
     interfacesetting.cpp \
     main.cpp \
@@ -28,10 +29,12 @@ SOURCES += \
     novelapiclient.cpp \
     novelwindow.cpp \
     searchitemwidget.cpp \
+    throttle.cpp \
     tiplabel.cpp
 
 HEADERS += \
     apidialog.h \
+    autoscroller.h \
     bosskeymanager.h \
     interfacesetting.h \
     mainwindow.h \
@@ -39,6 +42,7 @@ HEADERS += \
     noveltypes.h \
     novelwindow.h \
     searchitemwidget.h \
+    throttle.h \
     tiplabel.h
 
 FORMS += \

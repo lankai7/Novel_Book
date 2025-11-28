@@ -33,6 +33,7 @@ private slots:
     void onFontSizeChanged(int v);
     void onMarginsChanged(int v);
     void onSpacingChanged(int v);
+    void onspeedChanged(int v);
 
 private:
     Ui::InterfaceSetting *ui;

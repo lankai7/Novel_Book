@@ -315,8 +315,8 @@ void MainWindow::onChapterDoubleClicked(QListWidgetItem *item)
 void MainWindow::updateTextView(const NovelChapter &chap, bool read)
 {
     QString txt = chap.text;
-    txt.replace("\n", "\n\n       ");
-    txt = chap.chapterName + "\n\n" + txt;
+    txt.replace("\n", "\n\n    ");
+    txt = chap.chapterName + "\n\n    " + txt;
 
     if(read){
         novelWindow->setNovel(txt);
@@ -647,6 +647,7 @@ void MainWindow::on_add_bookshelf_clicked()
     if (exists) {
         // 从书架移除
         m_bookshelf.removeAll(m_currentBookId);
+        TipLabel::showTip(this, "移除书籍" + m_novelBookInfo.title + "！", 1200, "success");
 
         // 从 INI 中删除书信息
         QSettings set("bookshelf.ini", QSettings::IniFormat);
@@ -658,6 +659,7 @@ void MainWindow::on_add_bookshelf_clicked()
 
     } else {
         addBookToBookshelf(m_novelBookInfo);
+        TipLabel::showTip(this, "添加书籍" + m_novelBookInfo.title + "到书架！", 1200, "success");
     }
 
     // 刷新按钮文字和列表

@@ -10,7 +10,8 @@
 
 NovelWindow::NovelWindow(QWidget *parent,QString txt) :
     QWidget(parent),
-    ui(new Ui::NovelWindow)
+    ui(new Ui::NovelWindow),
+    thr(new Throttle(5100, this))
 {
     ui->setupUi(this);
 
@@ -52,10 +53,17 @@ NovelWindow::NovelWindow(QWidget *parent,QString txt) :
         emit sigNextChapter();   // 触发下一章
     });
 
+    m_autoScroll = new AutoScroller(ui->textContent, this);
 
-    //界面配置读取
-    m_interfaceSetting->loadSettings();
-    applyReaderSetting();
+    // 监听进度变化
+    connect(m_autoScroll, &AutoScroller::progressChanged, this, [=](int p){
+        ui->label_progress->setText(QString::number(p) + "%");
+        if(p == 99 && thr->canShow()){
+            QTimer::singleShot(3000, this, [=]() {
+                emit sigNextChapter();
+            });
+        }
+    });
 
 }
 
@@ -71,6 +79,10 @@ void NovelWindow::setNovel(QString txt)
     ui->textContent->setPlainText(txt);
     // 自动滚到顶部
     ui->textContent->moveCursor(QTextCursor::Start);
+    //界面配置读取
+    QTimer::singleShot(0, this, [this](){
+        applyReaderSetting();
+    });
 }
 
 int NovelWindow::scrollPos()
@@ -78,24 +90,17 @@ int NovelWindow::scrollPos()
     return ui->textContent->verticalScrollBar()->value();
 }
 
+void NovelWindow::setLabel(QString label)
+{
+    ui->chapter->setText(label);
+}
+
 void NovelWindow::keyPressEvent(QKeyEvent *event)
 {
-    // 获取当前滚动条
-    QScrollBar *bar = ui->textContent->verticalScrollBar();
-
-    int step = 100;   // 自定义滚动速度（像素），越大越快，可调 60~150
-
-    switch (event->key()) {
-
-    case Qt::Key_Up:
-        bar->setValue(bar->value() - step);
-        return;
-
-    case Qt::Key_Down:
-        bar->setValue(bar->value() + step);
-        return;
-    }
-    NovelWindow::keyPressEvent(event);
+    if (event->key() == Qt::Key_F5) {
+           m_autoScroll->toggle();
+       }
+       QWidget::keyPressEvent(event);
 }
 
 void NovelWindow::setScrollPos(int pos)
@@ -110,6 +115,7 @@ void NovelWindow::on_btn_hide_clicked()
     ui->btn_prev->setVisible(m_menuVisible);
     ui->btn_setting->setVisible(m_menuVisible);
     ui->btn_hide->setVisible(m_menuVisible);
+    ui->btn_AutoScroll->setVisible(m_menuVisible);
     if(!m_menuVisible)
         TipLabel::showTip(this, "按下F7呼出菜单！", 1500, "information");
 }
@@ -118,23 +124,29 @@ void NovelWindow::applyReaderSetting()
 {
     QSettings st("settings.ini", QSettings::IniFormat);
 
-    QString font = st.value("reader/font").toString();
-    int size = st.value("reader/font_size").toInt();
-    int margin = st.value("reader/margins").toInt();
-    int spacing = st.value("reader/spacing").toInt();
-    QString theme = st.value("reader/theme").toString();
+    QString font = st.value("reader/font", "宋体").toString();
+    int size = st.value("reader/font_size", 18).toInt();
+    int spacing = st.value("reader/spacing", 2).toInt();
+    int speed = st.value("reader/speed", 2).toInt();
+    QString theme = st.value("reader/theme", "亮色").toString();
 
-    // 设置字体
-    QFont f(font, size);
+    // 字体（用像素）
+    QFont f(font);
+    f.setPixelSize(size);
     ui->textContent->setFont(f);
-    ui->textContent->setContentsMargins(margin, margin, margin, margin);
 
-    QTextBlockFormat fmt;
-    fmt.setLineHeight(spacing * 10, QTextBlockFormat::ProportionalHeight);
     QTextCursor cursor = ui->textContent->textCursor();
     cursor.select(QTextCursor::Document);
-    cursor.setBlockFormat(fmt);
 
+    QTextBlockFormat blockFormat;
+    // 使用比例行高（150 = 1.5倍行高）
+    blockFormat.setLineHeight(spacing * 100, QTextBlockFormat::ProportionalHeight);
+
+    cursor.mergeBlockFormat(blockFormat);
+    cursor.clearSelection();
+
+    //滚动速度
+    m_autoScroll->setSpeed(speed);   // 1~10像素每帧
     // =============== 主题颜色 ===============
     QString bg;       // 正文背景
     QString fg;       // 正文字色
@@ -260,6 +272,7 @@ void NovelWindow::applyReaderSetting()
     ui->btn_next->setStyleSheet(btnStyle);
     ui->btn_setting->setStyleSheet(btnStyle);
     ui->btn_hide->setStyleSheet(btnStyle);
+    ui->btn_AutoScroll->setStyleSheet(btnStyle);
 }
 
 
@@ -287,4 +300,12 @@ void NovelWindow::closeEvent(QCloseEvent *event)
     QWidget::closeEvent(event);
 }
 
+void NovelWindow::on_btn_AutoScroll_clicked()
+{
+    m_autoScroll->toggle();
+
+    ui->btn_AutoScroll->setText(m_autoScroll->isRunning() ? "自动" : "手动");
+    if(m_autoScroll->isRunning())
+        TipLabel::showTip(this, "F5快捷键！", 1100, "information");
+}
 
