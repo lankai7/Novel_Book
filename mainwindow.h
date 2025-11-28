@@ -87,6 +87,8 @@ private slots:
 
     void on_book_shelf_clicked();
 
+    void on_editKeyword_returnPressed();
+
 private:
 
     // 保存阅读位置

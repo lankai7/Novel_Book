@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/res">
         <file>res/cover.jpg</file>
+        <file>res/favicon.ico</file>
+        <file>res/icon.png</file>
     </qresource>
 </RCC>

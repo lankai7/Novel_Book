@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     g_main = new MainWindow;
     g_main->setWindowTitle("阅读");
+    g_main->setWindowIcon(QIcon(":/res/res/favicon.ico"));
     g_main->show();
 
     return a.exec();

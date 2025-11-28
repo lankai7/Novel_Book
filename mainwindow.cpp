@@ -93,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     novelWindow = new NovelWindow(nullptr, "加载中……");
     novelWindow->setWindowTitle("阅读");
+    novelWindow->setWindowIcon(QIcon(":/res/res/favicon.ico"));
 
     connect(novelWindow, &NovelWindow::sigPrevChapter, this, &MainWindow::onPrevChapter);
     connect(novelWindow, &NovelWindow::sigNextChapter, this, &MainWindow::onNextChapter);
@@ -795,4 +796,9 @@ void MainWindow::toggleBossKey()
 void MainWindow::unregisterSubWindow(QWidget *w)
 {
     m_subWindows.removeAll(w);
+}
+
+void MainWindow::on_editKeyword_returnPressed()
+{
+    on_btnSearch_clicked();
 }
