@@ -70,7 +70,7 @@
            <item>
             <widget class="QLabel" name="label_progress">
              <property name="text">
-              <string/>
+              <string>0%</string>
              </property>
             </widget>
            </item>
@@ -162,7 +162,7 @@ QPushButton:disabled {
             </size>
            </property>
            <property name="text">
-            <string> 手动</string>
+            <string>手动</string>
            </property>
           </widget>
          </item>

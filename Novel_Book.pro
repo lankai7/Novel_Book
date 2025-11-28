@@ -60,4 +60,5 @@ RESOURCES += \
 
 DISTFILES += \
     dll/libcrypto-1_1-x64.dll \
-    dll/libssl-1_1-x64.dll
+    dll/libssl-1_1-x64.dll \
+    favicon.ico

@@ -77,6 +77,8 @@ NovelWindow::~NovelWindow()
 void NovelWindow::setNovel(QString txt)
 {
     ui->textContent->setPlainText(txt);
+    ui->chapter->setText(txt.section('\n', 0, 0));
+    ui->label_progress->setText("0%");
     // 自动滚到顶部
     ui->textContent->moveCursor(QTextCursor::Start);
     //界面配置读取
