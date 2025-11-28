@@ -45,6 +45,9 @@ MainWindow::MainWindow(QWidget *parent)
     if (!savedApi.isEmpty()) {
         m_api->setApiBase(savedApi);
     }
+    else{
+        m_api->setApiBase("https://www.de529a02a9.sbs/api");
+    }
 
     // === 绑定四个信号 ===
     connect(m_api, &NovelApiClient::searchFinished,
