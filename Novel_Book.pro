@@ -30,7 +30,8 @@ SOURCES += \
     novelwindow.cpp \
     searchitemwidget.cpp \
     throttle.cpp \
-    tiplabel.cpp
+    tiplabel.cpp \
+    versiondetector.cpp
 
 HEADERS += \
     apidialog.h \
@@ -43,7 +44,8 @@ HEADERS += \
     novelwindow.h \
     searchitemwidget.h \
     throttle.h \
-    tiplabel.h
+    tiplabel.h \
+    versiondetector.h
 
 FORMS += \
     interfacesetting.ui \

@@ -18,7 +18,8 @@
 #include "novelwindow.h"
 #include <QKeyEvent>
 #include <QSystemTrayIcon>
-#include "BossKeyManager.h"
+#include "bosskeymanager.h"
+#include "versiondetector.h"
 
 namespace Ui {
 class MainWindow;
@@ -89,6 +90,8 @@ private slots:
 
     void on_editKeyword_returnPressed();
 
+    void on_getApi_clicked();
+
 private:
 
     // 保存阅读位置
@@ -112,6 +115,8 @@ private:
     void onNextChapter();
 
     void createTray();       // 创建托盘
+
+
 
     Ui::MainWindow *ui;
     NovelApiClient *m_api = nullptr;
@@ -148,6 +153,7 @@ private:
 
     QSystemTrayIcon *tray = nullptr;
     BossKeyManager *bossKey = nullptr;
+    VersionDetector *versionDetector;
 };
 
 #endif // MAINWINDOW_H

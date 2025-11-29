@@ -19,8 +19,9 @@
  **/
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      versionDetector(new VersionDetector(this))
 {
     setFocusPolicy(Qt::StrongFocus);   // 保证能接收键盘
     // 托盘
@@ -46,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_api->setApiBase(savedApi);
     }
     else{
-        m_api->setApiBase("https://www.de529a02a9.sbs/api");
+        on_getApi_clicked();
     }
 
     // === 绑定四个信号 ===
@@ -109,7 +110,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     loadBookshelf();
-
 }
 
 MainWindow::~MainWindow()
@@ -806,4 +806,17 @@ void MainWindow::unregisterSubWindow(QWidget *w)
 void MainWindow::on_editKeyword_returnPressed()
 {
     on_btnSearch_clicked();
+}
+
+void MainWindow::on_getApi_clicked()
+{
+    versionDetector->startDetection();
+    QTimer::singleShot(3000, this, [=](){
+        QSettings settings("api.ini", QSettings::IniFormat);
+        QString savedApi = settings.value("API/base").toString();
+        if (!savedApi.isEmpty()) {
+            m_api->setApiBase(savedApi);
+        }
+        TipLabel::showTip(this, "API 已更新为:" + savedApi, 1200, "success");
+    });
 }

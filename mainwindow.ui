@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1222</width>
+    <width>1223</width>
     <height>750</height>
    </rect>
   </property>
@@ -290,6 +290,13 @@ QPushButton:disabled {
         <widget class="QLabel" name="label_9">
          <property name="text">
           <string>按F4隐藏界面</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="getApi">
+         <property name="text">
+          <string>获取域名</string>
          </property>
         </widget>
        </item>
