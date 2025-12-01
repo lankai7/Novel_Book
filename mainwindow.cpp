@@ -818,5 +818,6 @@ void MainWindow::on_getApi_clicked()
             m_api->setApiBase(savedApi);
         }
         TipLabel::showTip(this, "API 已更新为:" + savedApi, 1200, "success");
+        on_index_clicked();
     });
 }
