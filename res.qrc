@@ -4,4 +4,8 @@
         <file>res/favicon.ico</file>
         <file>res/icon.png</file>
     </qresource>
+    <qresource prefix="/new/pic">
+        <file>res/home.png</file>
+        <file>res/novel.png</file>
+    </qresource>
 </RCC>
