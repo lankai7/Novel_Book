@@ -14,14 +14,12 @@
 ## 🖼️ 预览界面
 
 ### 📌 主界面
->（请将图片上传到 GitHub，然后替换路径 `images/main_ui.png`）
 
 ![MainUI](res/home.png)
 
 ---
 
 ### 📌 小说阅读页面
->（替换路径 `images/reader_ui.png`）
 
 ![ReaderUI](res/novel.png)
 
