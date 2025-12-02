@@ -1,4 +1,4 @@
-# 📚 Novel Reader — 轻量级本地图书阅读器
+# 📚 Novel Reader — 轻量级免费小说阅读器
 
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Qt Version](https://img.shields.io/badge/Qt-5.14.2-blue.svg)
@@ -6,8 +6,8 @@
 ![Platform](https://img.shields.io/badge/Platform-Windows-512BD4.svg)
 ![Build](https://img.shields.io/badge/Build-qmake-brightgreen.svg)
 
-一个基于 **Qt Widgets (Qt 5.14.2 MinGW)** 编写的简洁、稳定、可扩展的本地小说阅读器。  
-支持 TXT 阅读、自动滚动、阅读设置、进度记忆、行距/字体调节等功能，界面干净易用。
+一个基于 **Qt Widgets (Qt 5.14.2 MinGW)** 编写的简洁、稳定、可扩展的网络小说阅读器。  
+支持 阅读、自动滚动、阅读设置、进度记忆、行距/字体调节等功能，界面干净易用。
 
 ---
 
@@ -67,6 +67,7 @@
 - **Qt Widgets / QSettings / QTextBrowser**
 - **C++11**
 - **qmake（.pro 项目）**
+- **SSL**
 
 ---
 
