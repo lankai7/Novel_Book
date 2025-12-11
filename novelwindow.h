@@ -28,6 +28,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
     void showEvent(QShowEvent *event);
     void closeEvent(QCloseEvent *event);
+    void wheelEvent(QWheelEvent* event) override;
 
 signals:
     void sigPrevChapter();   // 请求上一章
@@ -51,6 +52,10 @@ private:
     bool registered = false;
     AutoScroller *m_autoScroll = nullptr;
     Throttle *thr;
+    Throttle *thrDir;
+    Throttle *thr_prev;
+    bool m_autoNextPage = true;
+    bool canNextPage = true;
 };
 
 #endif // NOVELWINDOW_H

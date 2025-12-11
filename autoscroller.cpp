@@ -46,6 +46,7 @@ void AutoScroller::stop()
 void AutoScroller::setSpeed(int px_per_step)
 {
     m_speed = qMax(1, px_per_step);
+    _m_speed_ = qMax(1, px_per_step);
 }
 
 void AutoScroller::onScrollStep()
@@ -60,8 +61,8 @@ void AutoScroller::onScrollStep()
     int percent = (int)((double)bar->value() / bar->maximum() * 100.0);
 
     if (percent == 0 && thr->canShow()) {
-        stop();
-        QTimer::singleShot(3000, this, [=](){ start(); });
+        m_speed = 0;
+        QTimer::singleShot(3000, this, [=](){ m_speed = _m_speed_; });
     }
 }
 

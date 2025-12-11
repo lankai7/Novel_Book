@@ -11,7 +11,9 @@
 NovelWindow::NovelWindow(QWidget *parent,QString txt) :
     QWidget(parent),
     ui(new Ui::NovelWindow),
-    thr(new Throttle(5100, this))
+    thr(new Throttle(5100, this)),
+    thrDir(new Throttle(3100, this)),
+    thr_prev(new Throttle(1000, this))
 {
     ui->setupUi(this);
 
@@ -28,10 +30,12 @@ NovelWindow::NovelWindow(QWidget *parent,QString txt) :
     m_interfaceSetting->setWindowModality(Qt::ApplicationModal);
 
     connect(ui->btn_prev, &QPushButton::clicked, this, [this]() {
+        m_autoNextPage = false;
         emit sigPrevChapter();
     });
 
     connect(ui->btn_next, &QPushButton::clicked, this, [this]() {
+        m_autoNextPage = false;
         emit sigNextChapter();
     });
 
@@ -58,12 +62,22 @@ NovelWindow::NovelWindow(QWidget *parent,QString txt) :
     // 监听进度变化
     connect(m_autoScroll, &AutoScroller::progressChanged, this, [=](int p){
         ui->label_progress->setText(QString::number(p) + "%");
-        if(p == 99 && thr->canShow()){
+        if(p == 100 && thr->canShow() && m_autoScroll->isRunning()){
+            TipLabel::showTip(this, "5s后跳转下一章", 800, "information");
+            m_autoNextPage = true;
+            QTimer::singleShot(5000, this, [=]() {
+                if(m_autoNextPage)
+                    emit sigNextChapter();
+            });
+        }
+        else if(p == 100 && thrDir->canShow() && !m_autoScroll->isRunning()){
+            canNextPage = false;
             QTimer::singleShot(3000, this, [=]() {
-                emit sigNextChapter();
+                    canNextPage = true;
             });
         }
     });
+
 
 }
 
@@ -300,6 +314,31 @@ void NovelWindow::closeEvent(QCloseEvent *event)
         registered = false;
     }
     QWidget::closeEvent(event);
+}
+
+void NovelWindow::wheelEvent(QWheelEvent *event)
+{
+    // 获取滚轮移动的角度
+    QPoint angleDelta = event->angleDelta();
+
+    if (!angleDelta.isNull() && canNextPage && thr_prev->canShow()) {
+        if (angleDelta.y() < 0) {  // 向下滚动
+            QTimer::singleShot(0, this, [=]() {
+                emit sigNextChapter();
+            });
+
+            event->accept();  // 接受事件，阻止传递
+            return;
+        }
+        else if (angleDelta.y() > 0) {  // 向上滚动
+            emit sigPrevChapter();  // 如果需要向上翻页
+            event->accept();
+            return;
+        }
+    }
+
+    // 如果没有处理，传递给父类
+    QWidget::wheelEvent(event);
 }
 
 void NovelWindow::on_btn_AutoScroll_clicked()
