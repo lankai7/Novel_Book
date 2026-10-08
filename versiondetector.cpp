@@ -11,7 +11,7 @@ VersionDetector::VersionDetector(QObject *parent)
     : QObject(parent)
     , m_networkManager(new QNetworkAccessManager(this))
     , m_timeoutTimer(new QTimer(this))
-    , m_baseUrl("https://www.bqg78.com/js/compc.js") // 直接使用固定的 URL
+    , m_baseUrl("https://www.biquge78.org/js/compc.js") // 直接使用固定的 URL
 {
     m_timeoutTimer->setSingleShot(true);
     m_timeoutTimer->setInterval(20000); // 设置 20秒超时

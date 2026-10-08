@@ -42,6 +42,7 @@ HEADERS += \
     novelapiclient.h \
     noveltypes.h \
     novelwindow.h \
+    qaesencryption.h \
     searchitemwidget.h \
     throttle.h \
     tiplabel.h \
@@ -56,6 +57,12 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+# 头文件路径（include 目录）
+INCLUDEPATH += $$PWD/dll/include
+
+# 库文件路径（假设 .lib/.a 在 dll/lib 下）
+LIBS += -L$$PWD/dll -lssl -lcrypto
 
 RESOURCES += \
     res.qrc
